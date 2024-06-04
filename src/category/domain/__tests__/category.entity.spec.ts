@@ -160,3 +160,7 @@ describe("Category Unit Tests", () => {
     expect(category.is_active).toBe(false);
   });
 });
+
+describe("Category Validator", () => {
+  describe("create command", () => {});
+});
