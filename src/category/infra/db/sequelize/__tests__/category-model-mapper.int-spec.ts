@@ -1,6 +1,6 @@
 import { CategoryModel } from "../category.model";
 import { CategoryModelMapper } from "../category-model-mapper";
-import Category from "../../../../domain/category.entity";
+import { Category } from "../../../../domain/category.entity";
 import { Uuid } from "../../../../../shared/domain/value-objects/uuid.vo";
 import { EntityValidationError } from "../../../../../shared/domain/validators/validation.error";
 import { setupSequelize } from "../../../../../shared/infra/testing/helpers";
