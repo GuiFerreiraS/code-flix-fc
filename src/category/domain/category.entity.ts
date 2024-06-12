@@ -35,7 +35,7 @@ export default class Category extends Entity {
     this.created_at = props.created_at ?? new Date();
   }
 
-  get entity_id(): ValueObject {
+  get entity_id(): Uuid {
     return this.category_id;
   }
 
