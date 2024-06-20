@@ -1,39 +1,39 @@
 import {
   PaginationOutput,
   PaginationOutputMapper,
-} from "../../../../shared/application/pagination-output";
-import { IUseCase } from "../../../../shared/application/use-case.interface";
-import { SortDirection } from "../../../../shared/domain/repository/search-params";
+} from '../../../../shared/application/pagination-output';
+import { IUseCase } from '../../../../shared/application/use-case.interface';
+import { SortDirection } from '../../../../shared/domain/repository/search-params';
 import {
   CategoryFilter,
   CategorySearchParams,
   CategorySearchResult,
   ICategoryRepository,
-} from "../../../domain/category.repository";
+} from '../../../domain/category.repository';
 import {
   CategoryOutput,
   CategoryOutputMapper,
-} from "../common/category-output";
+} from '../common/category-output';
 
 export class ListCategoriesUseCase
-  implements IUseCase<ListCategoryInput, ListCategoryOutput>
+  implements IUseCase<ListCategoriesInput, ListCategoriesOutput>
 {
   constructor(private categoryRepo: ICategoryRepository) {}
 
-  async execute(input: ListCategoryInput): Promise<ListCategoryOutput> {
+  async execute(input: ListCategoriesInput): Promise<ListCategoriesOutput> {
     const params = new CategorySearchParams(input);
     const searchResult = await this.categoryRepo.search(params);
     return this.toOutput(searchResult);
   }
 
-  private toOutput(searchResult: CategorySearchResult): ListCategoryOutput {
+  private toOutput(searchResult: CategorySearchResult): ListCategoriesOutput {
     const { items: _items } = searchResult;
     const items = _items.map((item) => CategoryOutputMapper.toOutput(item));
     return PaginationOutputMapper.toOutput(items, searchResult);
   }
 }
 
-export type ListCategoryInput = {
+export type ListCategoriesInput = {
   page?: number;
   per_page?: number;
   sort?: string | null;
@@ -41,4 +41,4 @@ export type ListCategoryInput = {
   filter?: CategoryFilter | null;
 };
 
-export type ListCategoryOutput = PaginationOutput<CategoryOutput>;
+export type ListCategoriesOutput = PaginationOutput<CategoryOutput>;
