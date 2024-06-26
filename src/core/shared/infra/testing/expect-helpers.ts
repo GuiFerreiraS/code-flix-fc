@@ -1,7 +1,7 @@
 //import { ClassValidatorFields } from "../../domain/validators/class-validator-fields";
 //import { EntityValidationError } from "../../domain/validators/validation.error";
 //import { FieldsErrors } from "../../domain/validators/validator-fields-interface";
-import { Notification } from "../../domain/validators/notification";
+import { Notification } from '../../domain/validators/notification';
 
 // type Expected =
 //   | {
@@ -13,10 +13,10 @@ import { Notification } from "../../domain/validators/notification";
 expect.extend({
   notificationContainsErrorMessages(
     expected: Notification,
-    received: Array<string | { [key: string]: string[] }>
+    received: Array<string | { [key: string]: string[] }>,
   ) {
     const every = received.every((error) => {
-      if (typeof error === "string") {
+      if (typeof error === 'string') {
         return expected.errors.has(error);
       } else {
         return Object.entries(error).every(([field, messages]) => {
@@ -31,12 +31,12 @@ expect.extend({
       }
     });
     return every
-      ? { pass: true, message: () => "" }
+      ? { pass: true, message: () => '' }
       : {
           pass: false,
           message: () =>
             `The validation errors not contains ${JSON.stringify(
-              received
+              received,
             )}. Current: ${JSON.stringify(expected.toJSON())}`,
         };
   },
