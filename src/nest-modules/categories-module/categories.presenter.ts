@@ -6,9 +6,9 @@ import { CollectionPresenter } from '../shared-modules/collection.presenter';
 export class CategoryPresenter {
   id: string;
   name: string;
-  @Transform(({ value }: { value: Date }) => value.toISOString())
   description: string | null;
   is_active: boolean;
+  @Transform(({ value }: { value: Date }) => value.toISOString())
   created_at: Date;
 
   constructor(output: CategoryOutput) {
