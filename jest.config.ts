@@ -207,6 +207,16 @@ const config: Config = {
   },
   collectCoverageFrom: ['**/*.(t|j)s'],
   coverageDirectory: '../coverage',
+  coveragePathIgnorePatterns: [
+    '/node_modules/',
+    '.interface.ts',
+    'shared/infra/testing',
+    'shared-modules/testing',
+    'validator-rules.ts',
+    '-fixture.ts',
+    '.input.ts',
+    '.d.ts',
+  ],
   testEnvironment: 'node',
   setupFilesAfterEnv: ['./core/shared/infra/testing/expect-helpers.ts'],
   coverageThreshold: {
