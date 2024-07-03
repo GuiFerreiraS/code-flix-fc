@@ -24,7 +24,7 @@ export class CastMemberFakeBuilder<TBuild = any> {
     return new CastMemberFakeBuilder<CastMember>();
   }
 
-  static theCategories(countObjs: number) {
+  static theCastMembers(countObjs: number) {
     return new CastMemberFakeBuilder<CastMember[]>(countObjs);
   }
 
@@ -61,7 +61,7 @@ export class CastMemberFakeBuilder<TBuild = any> {
   }
 
   build(): TBuild {
-    const categories = new Array(this.countObjs)
+    const castMembers = new Array(this.countObjs)
       .fill(undefined)
       .map((_, index) => {
         const cast_member = new CastMember({
@@ -77,7 +77,7 @@ export class CastMemberFakeBuilder<TBuild = any> {
         cast_member.validate();
         return cast_member;
       });
-    return this.countObjs === 1 ? (categories[0] as any) : categories;
+    return this.countObjs === 1 ? (castMembers[0] as any) : castMembers;
   }
 
   get cast_member_id() {

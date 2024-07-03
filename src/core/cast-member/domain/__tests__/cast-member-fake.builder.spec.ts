@@ -9,7 +9,7 @@ describe('CastMemberFakeBuilder', () => {
 
   it('should initialize correctly with multiple cast members', () => {
     const count = 5;
-    const builder = CastMemberFakeBuilder.theCategories(count);
+    const builder = CastMemberFakeBuilder.theCastMembers(count);
     expect(builder).toBeDefined();
   });
 
@@ -60,7 +60,7 @@ describe('CastMemberFakeBuilder', () => {
 
   it('should build multiple CastMember objects correctly', () => {
     const count = 3;
-    const castMembers = CastMemberFakeBuilder.theCategories(count).build();
+    const castMembers = CastMemberFakeBuilder.theCastMembers(count).build();
     expect(Array.isArray(castMembers)).toBeTruthy();
     expect(castMembers.length).toEqual(count);
     castMembers.forEach((castMember) => {
