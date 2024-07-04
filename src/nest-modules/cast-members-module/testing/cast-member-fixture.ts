@@ -1,12 +1,9 @@
-import { CastMember } from '@core/cast-member/domain/cast-member.aggregate';
+import {
+  CastMember,
+  CastMemberTypes,
+} from '@core/cast-member/domain/cast-member.aggregate';
 
-const _keysInResponse = [
-  'id',
-  'name',
-  'description',
-  'is_active',
-  'created_at',
-];
+const _keysInResponse = ['id', 'name', 'type', 'created_at'];
 
 export class GetCastMemberFixture {
   static keysInResponse = _keysInResponse;
@@ -21,41 +18,41 @@ export class CreateCastMemberFixture {
       {
         send_data: {
           name: faker.name,
-          type: faker.type,
+          type: CastMemberTypes[faker.type],
         },
         expected: {
           name: faker.name,
-          type: faker.type,
+          type: CastMemberTypes[faker.type],
         },
       },
       {
         send_data: {
           name: faker.name,
-          type: faker.type,
+          type: CastMemberTypes[faker.type],
         },
         expected: {
           name: faker.name,
-          type: faker.type,
+          type: CastMemberTypes[faker.type],
         },
       },
       {
         send_data: {
           name: faker.name,
-          type: faker.type,
+          type: CastMemberTypes[faker.type],
         },
         expected: {
           name: faker.name,
-          type: faker.type,
+          type: CastMemberTypes[faker.type],
         },
       },
       {
         send_data: {
           name: faker.name,
-          type: faker.type,
+          type: CastMemberTypes[faker.type],
         },
         expected: {
           name: faker.name,
-          type: faker.type,
+          type: CastMemberTypes[faker.type],
         },
       },
     ];
@@ -71,7 +68,12 @@ export class CreateCastMemberFixture {
       EMPTY: {
         send_data: {},
         expected: {
-          message: ['name should not be empty', 'name must be a string'],
+          message: [
+            'name should not be empty',
+            'name must be a string',
+            'type should not be empty',
+            'type must be a string',
+          ],
           ...defaultExpected,
         },
       },
@@ -80,7 +82,12 @@ export class CreateCastMemberFixture {
           name: undefined,
         },
         expected: {
-          message: ['name should not be empty', 'name must be a string'],
+          message: [
+            'name should not be empty',
+            'name must be a string',
+            'type should not be empty',
+            'type must be a string',
+          ],
           ...defaultExpected,
         },
       },
@@ -89,7 +96,12 @@ export class CreateCastMemberFixture {
           name: null,
         },
         expected: {
-          message: ['name should not be empty', 'name must be a string'],
+          message: [
+            'name should not be empty',
+            'name must be a string',
+            'type should not be empty',
+            'type must be a string',
+          ],
           ...defaultExpected,
         },
       },
@@ -98,7 +110,11 @@ export class CreateCastMemberFixture {
           name: '',
         },
         expected: {
-          message: ['name should not be empty'],
+          message: [
+            'name should not be empty',
+            'type should not be empty',
+            'type must be a string',
+          ],
           ...defaultExpected,
         },
       },
@@ -129,6 +145,7 @@ export class CreateCastMemberFixture {
       NAME_TOO_LONG: {
         send_data: {
           name: faker.withInvalidNameTooLong().name,
+          type: CastMemberTypes[faker.type],
         },
         expected: {
           message: ['name must be shorter than or equal to 255 characters'],
@@ -148,21 +165,21 @@ export class UpdateCastMemberFixture {
       {
         send_data: {
           name: faker.name,
-          type: faker.type,
+          type: CastMemberTypes[faker.type],
         },
         expected: {
           name: faker.name,
-          type: faker.type,
+          type: CastMemberTypes[faker.type],
         },
       },
       {
         send_data: {
           name: faker.name,
-          type: faker.type,
+          type: CastMemberTypes[faker.type],
         },
         expected: {
           name: faker.name,
-          type: faker.type,
+          type: CastMemberTypes[faker.type],
         },
       },
     ];
@@ -202,6 +219,7 @@ export class UpdateCastMemberFixture {
       NAME_TOO_LONG: {
         send_data: {
           name: faker.withInvalidNameTooLong().name,
+          type: CastMemberTypes[faker.type],
         },
         expected: {
           message: ['name must be shorter than or equal to 255 characters'],
