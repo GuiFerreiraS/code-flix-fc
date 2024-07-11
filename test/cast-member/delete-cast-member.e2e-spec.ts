@@ -1,21 +1,21 @@
 import request from 'supertest';
 import { ICastMemberRepository } from '../../src/core/cast-member/domain/cast-member.repository';
-import * as CastMemberProviders from '../../src/nest-modules/cast-members-module/cast-members.providers';
+import { CAST_MEMBERS_PROVIDERS } from '../../src/nest-modules/cast-members-module/cast-members.providers';
 import { startApp } from 'src/nest-modules/shared-modules/testing/helpers';
 import { CastMember } from '@core/cast-member/domain/cast-member.aggregate';
 
 describe('CastMembersController (e2e)', () => {
   describe('/delete/:id (DELETE)', () => {
-    const appHelper = startApp();
+    const nestApp = startApp();
     describe('should a response error when id is invalid or not found', () => {
       const arrange = [
         {
           id: '88ff2587-ce5a-4769-a8c6-1d63d29c5f7a',
           expected: {
-            statusCode: 404,
-            error: 'Not Found',
             message:
               'CastMember not found with id: 88ff2587-ce5a-4769-a8c6-1d63d29c5f7a',
+            statusCode: 404,
+            error: 'Not Found',
           },
         },
         {
@@ -29,26 +29,26 @@ describe('CastMembersController (e2e)', () => {
       ];
 
       test.each(arrange)('when id is $id', async ({ id, expected }) => {
-        return request(appHelper.app.getHttpServer())
+        return request(nestApp.app.getHttpServer())
           .delete(`/cast-members/${id}`)
           .expect(expected.statusCode)
           .expect(expected);
       });
     });
 
-    it('should delete a category response with status 204', async () => {
-      const castMemberRepo = appHelper.app.get<ICastMemberRepository>(
-        CastMemberProviders.REPOSITORIES.CAST_MEMBER_REPOSITORY.provide,
+    it('should delete a cast member response with status 204', async () => {
+      const castMemberRepo = nestApp.app.get<ICastMemberRepository>(
+        CAST_MEMBERS_PROVIDERS.REPOSITORIES.CAST_MEMBER_REPOSITORY.provide,
       );
-      const category = CastMember.fake().aCastMember().build();
-      await castMemberRepo.insert(category);
+      const castMember = CastMember.fake().anActor().build();
+      await castMemberRepo.insert(castMember);
 
-      await request(appHelper.app.getHttpServer())
-        .delete(`/cast-members/${category.cast_member_id.id}`)
+      await request(nestApp.app.getHttpServer())
+        .delete(`/cast-members/${castMember.cast_member_id.id}`)
         .expect(204);
 
       await expect(
-        castMemberRepo.findById(category.cast_member_id),
+        castMemberRepo.findById(castMember.cast_member_id),
       ).resolves.toBeNull();
     });
   });

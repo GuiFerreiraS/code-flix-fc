@@ -1,11 +1,10 @@
 import request from 'supertest';
 import { instanceToPlain } from 'class-transformer';
 import { ICastMemberRepository } from '../../src/core/cast-member/domain/cast-member.repository';
-import * as CastMemberProviders from '../../src/nest-modules/cast-members-module/cast-members.providers';
+import { CAST_MEMBERS_PROVIDERS } from '../../src/nest-modules/cast-members-module/cast-members.providers';
 import { CastMemberOutputMapper } from '../../src/core/cast-member/application/use-cases/common/cast-member-output';
 import { startApp } from 'src/nest-modules/shared-modules/testing/helpers';
 import { CastMembersController } from 'src/nest-modules/cast-members-module/cast-members.controller';
-
 import { GetCastMemberFixture } from 'src/nest-modules/cast-members-module/testing/cast-member-fixture';
 import { CastMember } from '@core/cast-member/domain/cast-member.aggregate';
 
@@ -41,11 +40,11 @@ describe('CastMembersController (e2e)', () => {
       });
     });
 
-    it('should return a cast member ', async () => {
+    it('should return a cast-member ', async () => {
       const castMemberRepo = nestApp.app.get<ICastMemberRepository>(
-        CastMemberProviders.REPOSITORIES.CAST_MEMBER_REPOSITORY.provide,
+        CAST_MEMBERS_PROVIDERS.REPOSITORIES.CAST_MEMBER_REPOSITORY.provide,
       );
-      const castMember = CastMember.fake().aCastMember().build();
+      const castMember = CastMember.fake().anActor().build();
       await castMemberRepo.insert(castMember);
 
       const res = await request(nestApp.app.getHttpServer())

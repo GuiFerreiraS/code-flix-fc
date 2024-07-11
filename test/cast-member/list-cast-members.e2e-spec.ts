@@ -1,15 +1,16 @@
+import qs from 'qs';
 import request from 'supertest';
 import { instanceToPlain } from 'class-transformer';
 import { ICastMemberRepository } from '../../src/core/cast-member/domain/cast-member.repository';
 import { CastMemberOutputMapper } from '../../src/core/cast-member/application/use-cases/common/cast-member-output';
-import * as CastMemberProviders from '../../src/nest-modules/cast-members-module/cast-members.providers';
+import { CAST_MEMBERS_PROVIDERS } from '../../src/nest-modules/cast-members-module/cast-members.providers';
 import { startApp } from 'src/nest-modules/shared-modules/testing/helpers';
 import { CastMembersController } from '../../src/nest-modules/cast-members-module/cast-members.controller';
 import { ListCastMembersFixture } from '../../src/nest-modules/cast-members-module/testing/cast-member-fixture';
 
 describe('CastMembersController (e2e)', () => {
   describe('/cast-members (GET)', () => {
-    describe('should return cast member sorted by created_at when request query is empty', () => {
+    describe('should return cast members sorted by created_at when request query is empty', () => {
       let castMemberRepo: ICastMemberRepository;
       const nestApp = startApp();
       const { entitiesMap, arrange } =
@@ -17,7 +18,7 @@ describe('CastMembersController (e2e)', () => {
 
       beforeEach(async () => {
         castMemberRepo = nestApp.app.get<ICastMemberRepository>(
-          CastMemberProviders.REPOSITORIES.CAST_MEMBER_REPOSITORY.provide,
+          CAST_MEMBERS_PROVIDERS.REPOSITORIES.CAST_MEMBER_REPOSITORY.provide,
         );
         await castMemberRepo.bulkInsert(Object.values(entitiesMap));
       });
@@ -50,15 +51,15 @@ describe('CastMembersController (e2e)', () => {
 
       beforeEach(async () => {
         castMemberRepo = nestApp.app.get<ICastMemberRepository>(
-          CastMemberProviders.REPOSITORIES.CAST_MEMBER_REPOSITORY.provide,
+          CAST_MEMBERS_PROVIDERS.REPOSITORIES.CAST_MEMBER_REPOSITORY.provide,
         );
         await castMemberRepo.bulkInsert(Object.values(entitiesMap));
       });
 
-      test.each([arrange])(
+      test.each([arrange[0]])(
         'when query params is $send_data',
         async ({ send_data, expected }) => {
-          const queryParams = new URLSearchParams(send_data as any).toString();
+          const queryParams = qs.stringify(send_data as any);
           return request(nestApp.app.getHttpServer())
             .get(`/cast-members/?${queryParams}`)
             .expect(200)
