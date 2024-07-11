@@ -1,46 +1,55 @@
-import { SortDirection } from '../../../../shared/domain/repository/search-params';
 import { InMemorySearchableRepository } from '../../../../shared/infra/db/in-memory/in-memory.repository';
+import { SortDirection } from '../../../../shared/domain/repository/search-params';
 import {
   CastMember,
   CastMemberId,
-  CastMemberTypes,
 } from '../../../domain/cast-member.aggregate';
 import {
-  CastMemberFilter,
   ICastMemberRepository,
+  CastMemberFilter,
 } from '../../../domain/cast-member.repository';
 
 export class CastMemberInMemoryRepository
-  extends InMemorySearchableRepository<CastMember, CastMemberId>
+  extends InMemorySearchableRepository<
+    CastMember,
+    CastMemberId,
+    CastMemberFilter
+  >
   implements ICastMemberRepository
 {
   sortableFields: string[] = ['name', 'created_at'];
 
+  getEntity(): new (...args: any[]) => CastMember {
+    return CastMember;
+  }
+
   protected async applyFilter(
     items: CastMember[],
-    filter: CastMemberFilter,
+    filter: CastMemberFilter | null,
   ): Promise<CastMember[]> {
     if (!filter) {
       return items;
     }
+
     return items.filter((i) => {
-      return (
-        i.name.toLowerCase().includes(filter.toLowerCase()) ||
-        i.type === CastMemberTypes[filter.toUpperCase()]
-      );
+      const containsName =
+        filter.name && i.name.toLowerCase().includes(filter.name.toLowerCase());
+      const hasType = filter.type && i.type.equals(filter.type);
+      return filter.name && filter.type
+        ? containsName && hasType
+        : filter.name
+          ? containsName
+          : hasType;
     });
   }
 
-  getEntity(): new (...arg: any[]) => CastMember {
-    return CastMember;
-  }
   protected applySort(
     items: CastMember[],
-    sort: string,
-    sort_dir: SortDirection,
+    sort: string | null,
+    sort_dir: SortDirection | null,
   ): CastMember[] {
-    return sort
-      ? super.applySort(items, sort, sort_dir)
-      : super.applySort(items, 'created_at', 'desc');
+    return !sort
+      ? super.applySort(items, 'created_at', 'desc')
+      : super.applySort(items, sort, sort_dir);
   }
 }

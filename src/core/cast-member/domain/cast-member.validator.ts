@@ -13,7 +13,11 @@ export class CastMemberRules {
 }
 
 export class CastMemberValidator extends ClassValidatorFields {
-  validate(notification: Notification, data: any, fields?: string[]): boolean {
+  validate(
+    notification: Notification,
+    data: CastMember,
+    fields?: string[],
+  ): boolean {
     const newFields = fields?.length ? fields : ['name'];
     return super.validate(notification, new CastMemberRules(data), newFields);
   }

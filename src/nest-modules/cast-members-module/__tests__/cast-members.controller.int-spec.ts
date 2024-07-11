@@ -1,30 +1,24 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ICastMemberRepository } from '../../../core/cast-member/domain/cast-member.repository';
 import { CastMembersController } from '../cast-members.controller';
-import { ConfigModule } from 'src/nest-modules/config-module/config.module';
-import { DatabaseModule } from 'src/nest-modules/database-module/database.module';
 import { CastMembersModule } from '../cast-members.module';
-import { CAST_MEMBER_PROVIDERS } from '../cast-members.providers';
-import { CreateCastMemberUseCase } from '@core/cast-member/application/use-cases/create-cast-member/create-cast-member.use-case';
-import { UpdateCastMemberUseCase } from '@core/cast-member/application/use-cases/update-cast-member/update-cast-member.use-case';
-import { ListCastMembersUseCase } from '@core/cast-member/application/use-cases/list-cast-members/list-cast-members.use-case';
-import { GetCastMemberUseCase } from '@core/cast-member/application/use-cases/get-cast-member/get-cast-member.use-case';
-import { DeleteCastMemberUseCase } from '@core/cast-member/application/use-cases/delete-cast-member/delete-cast-member.use-case';
+import { CreateCastMemberUseCase } from '../../../core/cast-member/application/use-cases/create-cast-member/create-cast-member.use-case';
+import { UpdateCastMemberUseCase } from '../../../core/cast-member/application/use-cases/update-cast-member/update-cast-member.use-case';
+import { ListCastMembersUseCase } from '../../../core/cast-member/application/use-cases/list-cast-members/list-cast-members.use-case';
+import { GetCastMemberUseCase } from '../../../core/cast-member/application/use-cases/get-cast-member/get-cast-member.use-case';
+import { DeleteCastMemberUseCase } from '../../../core/cast-member/application/use-cases/delete-cast-member/delete-cast-member.use-case';
+import { CastMember } from '../../../core/cast-member/domain/cast-member.aggregate';
+import { Uuid } from '../../../core/shared/domain/value-objects/uuid.vo';
+import { CastMemberCollectionPresenter } from '../cast-members.presenter';
+import * as CastMemberProviders from '../cast-members.providers';
+import { DatabaseModule } from '../../database-module/database.module';
+import { ConfigModule } from '../../config-module/config.module';
+import { CastMemberOutputMapper } from '../../../core/cast-member/application/use-cases/common/cast-member-output';
 import {
   CreateCastMemberFixture,
   ListCastMembersFixture,
   UpdateCastMemberFixture,
 } from '../testing/cast-member-fixture';
-import { CastMemberOutputMapper } from '@core/cast-member/application/use-cases/common/cast-member-output';
-import {
-  CastMemberCollectionPresenter,
-  CastMemberPresenter,
-} from '../cast-members.presenter';
-import { Uuid } from '@core/shared/domain/value-objects/uuid.vo';
-import {
-  CastMember,
-  CastMemberTypes,
-} from '@core/cast-member/domain/cast-member.aggregate';
 
 describe('CastMembersController Integration Tests', () => {
   let controller: CastMembersController;
@@ -34,9 +28,10 @@ describe('CastMembersController Integration Tests', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [ConfigModule.forRoot(), DatabaseModule, CastMembersModule],
     }).compile();
-    controller = module.get<CastMembersController>(CastMembersController);
-    repository = module.get<ICastMemberRepository>(
-      CAST_MEMBER_PROVIDERS.REPOSITORIES.CAST_MEMBER_REPOSITORY.provide,
+
+    controller = module.get(CastMembersController);
+    repository = module.get(
+      CastMemberProviders.REPOSITORIES.CAST_MEMBER_REPOSITORY.provide,
     );
   });
 
@@ -51,18 +46,24 @@ describe('CastMembersController Integration Tests', () => {
 
   describe('should create a cast member', () => {
     const arrange = CreateCastMemberFixture.arrangeForCreate();
+
     test.each(arrange)(
       'when body is $send_data',
       async ({ send_data, expected }) => {
         const presenter = await controller.create(send_data);
         const entity = await repository.findById(new Uuid(presenter.id));
+
         expect(entity!.toJSON()).toStrictEqual({
           cast_member_id: presenter.id,
           created_at: presenter.created_at,
           ...expected,
         });
-        const output = CastMemberOutputMapper.toOutput(entity!);
-        expect(presenter).toEqual(new CastMemberPresenter(output));
+
+        expect(presenter).toEqual(
+          CastMembersController.serialize(
+            CastMemberOutputMapper.toOutput(entity!),
+          ),
+        );
       },
     );
   });
@@ -70,36 +71,39 @@ describe('CastMembersController Integration Tests', () => {
   describe('should update a cast member', () => {
     const arrange = UpdateCastMemberFixture.arrangeForUpdate();
 
-    const castMember = CastMember.fake().aCastMember().build();
-
+    const castMember = CastMember.fake().anActor().build();
     beforeEach(async () => {
       await repository.insert(castMember);
     });
 
     test.each(arrange)(
-      'when body is $send_data',
+      'with request $send_data',
       async ({ send_data, expected }) => {
         const presenter = await controller.update(
           castMember.cast_member_id.id,
-          send_data,
+          send_data as any,
         );
         const entity = await repository.findById(new Uuid(presenter.id));
+
         expect(entity!.toJSON()).toStrictEqual({
           cast_member_id: presenter.id,
           created_at: presenter.created_at,
           name: expected.name ?? castMember.name,
-          type: 'type' in expected ? expected.type : castMember.type,
+          type: expected.type ?? castMember.type.type,
         });
-        const output = CastMemberOutputMapper.toOutput(entity!);
-        expect(presenter).toEqual(new CastMemberPresenter(output));
+        expect(presenter).toEqual(
+          CastMembersController.serialize(
+            CastMemberOutputMapper.toOutput(entity!),
+          ),
+        );
       },
     );
   });
 
   it('should delete a cast member', async () => {
-    const castMember = CastMember.fake().aCastMember().build();
+    const castMember = CastMember.fake().anActor().build();
     await repository.insert(castMember);
-    const response = await controller.remove(castMember.cast_member_id.id);
+    const response = await controller.remove(castMember.entity_id.id);
     expect(response).not.toBeDefined();
     await expect(
       repository.findById(castMember.cast_member_id),
@@ -107,18 +111,17 @@ describe('CastMembersController Integration Tests', () => {
   });
 
   it('should get a cast member', async () => {
-    const castMember = CastMember.fake().aCastMember().build();
+    const castMember = CastMember.fake().anActor().build();
     await repository.insert(castMember);
     const presenter = await controller.findOne(castMember.cast_member_id.id);
-
     expect(presenter.id).toBe(castMember.cast_member_id.id);
     expect(presenter.name).toBe(castMember.name);
-    expect(presenter.type).toBe(CastMemberTypes[castMember.type]);
-    expect(presenter.created_at).toStrictEqual(castMember.created_at);
+    expect(presenter.type).toBe(castMember.type.type);
+    expect(presenter.created_at).toEqual(castMember.created_at);
   });
 
   describe('search method', () => {
-    describe('should sorted cast members by created_at', () => {
+    describe('should returns cast members using query empty ordered by created_at', () => {
       const { entitiesMap, arrange } =
         ListCastMembersFixture.arrangeIncrementedWithCreatedAt();
 
@@ -141,7 +144,7 @@ describe('CastMembersController Integration Tests', () => {
       );
     });
 
-    describe('should return cast members using pagination, sort and filter', () => {
+    describe('should returns output using pagination, sort and filter', () => {
       const { entitiesMap, arrange } = ListCastMembersFixture.arrangeUnsorted();
 
       beforeEach(async () => {
@@ -149,7 +152,7 @@ describe('CastMembersController Integration Tests', () => {
       });
 
       test.each(arrange)(
-        'when send_data is $send_data',
+        'when send_data is {"filter": $send_data.filter, "page": $send_data.page, "per_page": $send_data.per_page, "sort": $send_data.sort, "sort_dir": $send_data.sort_dir}',
         async ({ send_data, expected }) => {
           const presenter = await controller.search(send_data);
           const { entities, ...paginationProps } = expected;
@@ -164,3 +167,12 @@ describe('CastMembersController Integration Tests', () => {
     });
   });
 });
+//cast-members?filter[type]=1
+// Arquitetura em camadas
+
+// Portas de entrada ----
+// use cases
+// coração do software
+// infraestrutura
+
+//Test Data Builders - Build Design Pattern

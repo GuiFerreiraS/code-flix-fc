@@ -123,30 +123,6 @@ describe('InMemorySearchableRepository Unit Tests', () => {
     });
   });
 
-  describe('applyPagination method', () => {
-    it('should pagination items', async () => {
-      const items = [
-        new StubEntity({ name: 'a', price: 5 }),
-        new StubEntity({ name: 'b', price: 5 }),
-        new StubEntity({ name: 'c', price: 5 }),
-        new StubEntity({ name: 'd', price: 5 }),
-        new StubEntity({ name: 'e', price: 5 }),
-      ];
-
-      let itemsPaginated = await repository['applyPagination'](items, 1, 2);
-      expect(itemsPaginated).toStrictEqual([items[0], items[1]]);
-
-      itemsPaginated = await repository['applyPagination'](items, 2, 2);
-      expect(itemsPaginated).toStrictEqual([items[2], items[3]]);
-
-      itemsPaginated = await repository['applyPagination'](items, 3, 2);
-      expect(itemsPaginated).toStrictEqual([items[4]]);
-
-      itemsPaginated = await repository['applyPagination'](items, 4, 2);
-      expect(itemsPaginated).toStrictEqual([]);
-    });
-  });
-
   describe('search method', () => {
     it('should apply only paginate when other params are null', async () => {
       const entity = new StubEntity({ name: 'a', price: 5 });

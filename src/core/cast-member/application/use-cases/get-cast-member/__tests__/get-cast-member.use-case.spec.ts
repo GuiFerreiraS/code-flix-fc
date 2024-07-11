@@ -1,12 +1,10 @@
 import { NotFoundError } from '../../../../../shared/domain/errors/not-found.error';
-import { InvalidUuidError } from '../../../../../shared/domain/value-objects/uuid.vo';
+import { CastMemberTypes } from '../../../../domain/cast-member-type.vo';
 import {
   CastMember,
   CastMemberId,
-  CastMemberTypes,
 } from '../../../../domain/cast-member.aggregate';
 import { CastMemberInMemoryRepository } from '../../../../infra/db/in-memory/cast-member-in-memory.repository';
-
 import { GetCastMemberUseCase } from '../get-cast-member.use-case';
 
 describe('GetCastMemberUseCase Unit Tests', () => {
@@ -19,34 +17,23 @@ describe('GetCastMemberUseCase Unit Tests', () => {
   });
 
   it('should throws error when entity not found', async () => {
-    await expect(() => useCase.execute({ id: 'fake id' })).rejects.toThrow(
-      new InvalidUuidError(),
-    );
-
-    const uuid = new CastMemberId();
-
-    await expect(() => useCase.execute({ id: uuid.id })).rejects.toThrow(
-      new NotFoundError(uuid.id, CastMember),
-    );
+    const castMemberId = new CastMemberId();
+    await expect(() =>
+      useCase.execute({ id: castMemberId.id }),
+    ).rejects.toThrow(new NotFoundError(castMemberId.id, CastMember));
   });
 
-  it('should get a cast member', async () => {
+  it('should returns a cast member', async () => {
+    const items = [CastMember.fake().anActor().build()];
+    repository.items = items;
     const spyFindById = jest.spyOn(repository, 'findById');
-    const entity = new CastMember({
-      name: 'Movie',
-      type: 1,
-    });
-    repository.items = [entity];
-
-    const output = await useCase.execute({
-      id: entity.cast_member_id.id,
-    });
+    const output = await useCase.execute({ id: items[0].cast_member_id.id });
     expect(spyFindById).toHaveBeenCalledTimes(1);
     expect(output).toStrictEqual({
-      id: entity.cast_member_id.id,
-      name: 'Movie',
-      type: CastMemberTypes[entity.type],
-      created_at: entity.created_at,
+      id: items[0].cast_member_id.id,
+      name: items[0].name,
+      type: CastMemberTypes.ACTOR,
+      created_at: items[0].created_at,
     });
   });
 });

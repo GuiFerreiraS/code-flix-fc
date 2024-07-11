@@ -1,88 +1,108 @@
-import {
-  CastMember,
-  CastMemberTypes,
-} from '@core/cast-member/domain/cast-member.aggregate';
+import { CastMemberType } from '../../../domain/cast-member-type.vo';
+import { CastMember } from '../../../domain/cast-member.aggregate';
 import { CastMemberInMemoryRepository } from './cast-member-in-memory.repository';
 
 describe('CastMemberInMemoryRepository', () => {
   let repository: CastMemberInMemoryRepository;
 
-  beforeEach(() => {
-    repository = new CastMemberInMemoryRepository();
-  });
+  beforeEach(() => (repository = new CastMemberInMemoryRepository()));
+  it('should no filter items when filter object is null', async () => {
+    const items = [
+      CastMember.fake().anActor().build(),
+      CastMember.fake().aDirector().build(),
+    ];
+    const filterSpy = jest.spyOn(items, 'filter' as any);
 
-  it('should not filter items when filter object is null', async () => {
-    const items = [CastMember.fake().aCastMember().build()];
     const itemsFiltered = await repository['applyFilter'](items, null);
+    expect(filterSpy).not.toHaveBeenCalled();
     expect(itemsFiltered).toStrictEqual(items);
   });
 
   it('should filter items by name', async () => {
+    const faker = CastMember.fake().anActor();
     const items = [
-      CastMember.fake().aCastMember().withName('John Doe').build(),
-      CastMember.fake().aCastMember().withName('Jane Doe').build(),
+      faker.withName('test').build(),
+      faker.withName('TEST').build(),
+      faker.withName('fake').build(),
     ];
-    const itemsFiltered = await repository['applyFilter'](items, 'john');
-    expect(itemsFiltered).toStrictEqual([items[0]]);
+    const filterSpy = jest.spyOn(items, 'filter' as any);
+
+    const itemsFiltered = await repository['applyFilter'](items, {
+      name: 'TEST',
+    });
+    expect(filterSpy).toHaveBeenCalledTimes(1);
+    expect(itemsFiltered).toStrictEqual([items[0], items[1]]);
   });
 
   it('should filter items by type', async () => {
     const items = [
-      CastMember.fake().aCastMember().withType(CastMemberTypes.ACTOR).build(),
-      CastMember.fake()
-        .aCastMember()
-        .withType(CastMemberTypes.DIRECTOR)
-        .build(),
+      CastMember.fake().anActor().build(),
+      CastMember.fake().aDirector().build(),
     ];
-    const itemsFiltered = await repository['applyFilter'](items, 'DIRECTOR');
+    const filterSpy = jest.spyOn(items, 'filter' as any);
+
+    let itemsFiltered = await repository['applyFilter'](items, {
+      type: CastMemberType.createAnActor(),
+    });
+    expect(filterSpy).toHaveBeenCalledTimes(1);
+    expect(itemsFiltered).toStrictEqual([items[0]]);
+
+    itemsFiltered = await repository['applyFilter'](items, {
+      type: CastMemberType.createADirector(),
+    });
+    expect(filterSpy).toHaveBeenCalledTimes(2);
     expect(itemsFiltered).toStrictEqual([items[1]]);
   });
 
-  it('should sort by created_at desc by default', async () => {
+  it('should filter items by name and type', async () => {
+    const items = [
+      CastMember.fake().anActor().withName('test').build(),
+      CastMember.fake().anActor().withName('fake').build(),
+      CastMember.fake().aDirector().build(),
+      CastMember.fake().aDirector().withName('test fake').build(),
+    ];
+
+    const itemsFiltered = await repository['applyFilter'](items, {
+      name: 'test',
+      type: CastMemberType.createAnActor(),
+    });
+    expect(itemsFiltered).toStrictEqual([items[0]]);
+  });
+
+  it('should sort by created_at when sort param is null', async () => {
     const items = [
       CastMember.fake()
-        .aCastMember()
-        .withCreatedAt(new Date('2020-01-01'))
+        .anActor()
+        .withName('test')
+        .withCreatedAt(new Date())
         .build(),
       CastMember.fake()
-        .aCastMember()
-        .withCreatedAt(new Date('2021-01-01'))
+        .anActor()
+        .withName('TEST')
+        .withCreatedAt(new Date(new Date().getTime() + 1))
+        .build(),
+      CastMember.fake()
+        .anActor()
+        .withName('fake')
+        .withCreatedAt(new Date(new Date().getTime() + 2))
         .build(),
     ];
+
     const itemsSorted = await repository['applySort'](items, null, null);
-    expect(itemsSorted).toStrictEqual([items[1], items[0]]);
+    expect(itemsSorted).toStrictEqual([items[2], items[1], items[0]]);
   });
 
-  it('should sort items by name asc', async () => {
+  it('should sort by name', async () => {
     const items = [
-      CastMember.fake().aCastMember().withName('b').build(),
-      CastMember.fake().aCastMember().withName('a').build(),
+      CastMember.fake().anActor().withName('c').build(),
+      CastMember.fake().anActor().withName('b').build(),
+      CastMember.fake().anActor().withName('a').build(),
     ];
-    const itemsSorted = repository['applySort'](items, 'name', 'asc');
-    expect(itemsSorted).toStrictEqual([items[1], items[0]]);
-  });
 
-  it('should sort items by name desc', async () => {
-    const items = [
-      CastMember.fake().aCastMember().withName('a').build(),
-      CastMember.fake().aCastMember().withName('b').build(),
-    ];
-    const itemsSorted = repository['applySort'](items, 'name', 'desc');
-    expect(itemsSorted).toStrictEqual([items[1], items[0]]);
-  });
+    let itemsSorted = await repository['applySort'](items, 'name', 'asc');
+    expect(itemsSorted).toStrictEqual([items[2], items[1], items[0]]);
 
-  it('should sort items by created_at asc', async () => {
-    const items = [
-      CastMember.fake()
-        .aCastMember()
-        .withCreatedAt(new Date('2021-01-01'))
-        .build(),
-      CastMember.fake()
-        .aCastMember()
-        .withCreatedAt(new Date('2020-01-01'))
-        .build(),
-    ];
-    const itemsSorted = repository['applySort'](items, 'created_at', 'asc');
-    expect(itemsSorted).toStrictEqual([items[1], items[0]]);
+    itemsSorted = await repository['applySort'](items, 'name', 'desc');
+    expect(itemsSorted).toStrictEqual([items[0], items[1], items[2]]);
   });
 });

@@ -1,13 +1,12 @@
-import { NotFoundError } from '../../../../../shared/domain/errors/not-found.error';
+import { GetCastMemberUseCase } from '../get-cast-member.use-case';
 import { setupSequelize } from '../../../../../shared/infra/testing/helpers';
 import {
   CastMember,
   CastMemberId,
-  CastMemberTypes,
 } from '../../../../domain/cast-member.aggregate';
-import { CastMemberSequelizeRepository } from '../../../../infra/db/sequelize/cast-member-sequelize.repository';
-import { CastMemberModel } from '../../../../infra/db/sequelize/cast-member.model';
-import { GetCastMemberUseCase } from '../get-cast-member.use-case';
+import { NotFoundError } from '../../../../../shared/domain/errors/not-found.error';
+import { CastMemberSequelizeRepository } from '@core/cast-member/infra/db/sequelize/cast-member-sequelize.repository';
+import { CastMemberModel } from '@core/cast-member/infra/db/sequelize/cast-member.model';
 
 describe('GetCastMemberUseCase Integration Tests', () => {
   let useCase: GetCastMemberUseCase;
@@ -21,20 +20,20 @@ describe('GetCastMemberUseCase Integration Tests', () => {
   });
 
   it('should throws error when entity not found', async () => {
-    const uuid = new CastMemberId();
-    await expect(() => useCase.execute({ id: uuid.id })).rejects.toThrow(
-      new NotFoundError(uuid.id, CastMember),
-    );
+    const castMemberId = new CastMemberId();
+    await expect(() =>
+      useCase.execute({ id: castMemberId.id }),
+    ).rejects.toThrow(new NotFoundError(castMemberId.id, CastMember));
   });
 
   it('should returns a cast member', async () => {
-    const castMember = CastMember.fake().aCastMember().build();
+    const castMember = CastMember.fake().anActor().build();
     await repository.insert(castMember);
     const output = await useCase.execute({ id: castMember.cast_member_id.id });
     expect(output).toStrictEqual({
       id: castMember.cast_member_id.id,
       name: castMember.name,
-      type: CastMemberTypes[castMember.type],
+      type: castMember.type.type,
       created_at: castMember.created_at,
     });
   });

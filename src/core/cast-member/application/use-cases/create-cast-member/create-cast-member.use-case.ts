@@ -1,9 +1,7 @@
 import { IUseCase } from '../../../../shared/application/use-case.interface';
 import { EntityValidationError } from '../../../../shared/domain/validators/validation.error';
-import {
-  CastMember,
-  CastMemberTypes,
-} from '../../../domain/cast-member.aggregate';
+import { CastMember } from '../../../domain/cast-member.aggregate';
+import { CastMemberType } from '../../../domain/cast-member-type.vo';
 import { ICastMemberRepository } from '../../../domain/cast-member.repository';
 import {
   CastMemberOutput,
@@ -14,20 +12,26 @@ import { CreateCastMemberInput } from './create-cast-member.input';
 export class CreateCastMemberUseCase
   implements IUseCase<CreateCastMemberInput, CreateCastMemberOutput>
 {
-  constructor(private readonly castMemberRepo: ICastMemberRepository) {}
+  constructor(private castMemberRepo: ICastMemberRepository) {}
 
-  async execute(input: CreateCastMemberInput): Promise<CreateCastMemberOutput> {
+  async execute(input: CreateCastMemberInput): Promise<CastMemberOutput> {
+    const [type, errorCastMemberType] = CastMemberType.create(
+      input.type,
+    ).asArray();
     const entity = CastMember.create({
       ...input,
-      type: CastMemberTypes[input.type],
+      type,
     });
+    const notification = entity.notification;
+    if (errorCastMemberType) {
+      notification.setError(errorCastMemberType.message, 'type');
+    }
 
-    if (entity.notification.hasErrors()) {
-      throw new EntityValidationError(entity.notification.toJSON());
+    if (notification.hasErrors()) {
+      throw new EntityValidationError(notification.toJSON());
     }
 
     await this.castMemberRepo.insert(entity);
-
     return CastMemberOutputMapper.toOutput(entity);
   }
 }

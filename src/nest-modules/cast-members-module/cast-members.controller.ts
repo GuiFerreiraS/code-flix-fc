@@ -13,13 +13,13 @@ import {
 } from '@nestjs/common';
 import { UpdateCastMemberDto } from './dto/update-cast-member.dto';
 import { CreateCastMemberDto } from './dto/create-cast-member.dto';
-import { SearchCastMembersDto } from './dto/search-cast-members.dto';
+import { SearchCastMemberDto } from './dto/search-cast-members.dto';
 import { CreateCastMemberUseCase } from '@core/cast-member/application/use-cases/create-cast-member/create-cast-member.use-case';
 import { DeleteCastMemberUseCase } from '@core/cast-member/application/use-cases/delete-cast-member/delete-cast-member.use-case';
 import { UpdateCastMemberUseCase } from '@core/cast-member/application/use-cases/update-cast-member/update-cast-member.use-case';
 import { GetCastMemberUseCase } from '@core/cast-member/application/use-cases/get-cast-member/get-cast-member.use-case';
 import { ListCastMembersUseCase } from '@core/cast-member/application/use-cases/list-cast-members/list-cast-members.use-case';
-
+import { UpdateCastMemberInput } from '@core/cast-member/application/use-cases/update-cast-member/update-cast-member.input';
 import { CastMemberOutput } from '@core/cast-member/application/use-cases/common/cast-member-output';
 import {
   CastMemberCollectionPresenter,
@@ -50,8 +50,8 @@ export class CastMembersController {
   }
 
   @Get()
-  async search(@Query() searchParamsDto: SearchCastMembersDto) {
-    const output = await this.listUseCase.execute(searchParamsDto);
+  async search(@Query() searchParams: SearchCastMemberDto) {
+    const output = await this.listUseCase.execute(searchParams);
     return new CastMemberCollectionPresenter(output);
   }
 
@@ -68,10 +68,8 @@ export class CastMembersController {
     @Param('id', new ParseUUIDPipe({ errorHttpStatusCode: 422 })) id: string,
     @Body() updateCastMemberDto: UpdateCastMemberDto,
   ) {
-    const output = await this.updateUseCase.execute({
-      ...updateCastMemberDto,
-      id,
-    });
+    const input = new UpdateCastMemberInput({ id, ...updateCastMemberDto });
+    const output = await this.updateUseCase.execute(input);
     return CastMembersController.serialize(output);
   }
 
