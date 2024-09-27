@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 
-export class MediaFilevalidator {
+export class MediaFileValidator {
   constructor(
     private readonly max_size: number,
     private readonly valid_mime_types: string[],
@@ -20,7 +20,7 @@ export class MediaFilevalidator {
     }
 
     if (!this.validateMimeType(mime_type)) {
-      throw new InvalidmediaFileMimeTypeError(mime_type, this.valid_mime_types);
+      throw new InvalidMediaFileMimeTypeError(mime_type, this.valid_mime_types);
     }
 
     return {
@@ -56,7 +56,7 @@ export class InvalidMediaFileSizeError extends Error {
   }
 }
 
-export class InvalidmediaFileMimeTypeError extends Error {
+export class InvalidMediaFileMimeTypeError extends Error {
   constructor(actual_mime_type: string, valid_mime_types: string[]) {
     super(
       `Invalid media file mime type: ${actual_mime_type} not in 
