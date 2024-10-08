@@ -36,7 +36,7 @@ describe('CastMembersController Unit Tests', () => {
     const output: CreateCastMemberOutput = {
       id: '9366b7dc-2d71-4799-b91c-c64adb205104',
       name: 'Movie',
-      type: 'ACTOR',
+      type: 1,
       created_at: new Date(),
     };
     const mockCreateUseCase = {
@@ -46,7 +46,7 @@ describe('CastMembersController Unit Tests', () => {
     controller['createUseCase'] = mockCreateUseCase;
     const input: CreateCastMemberDto = {
       name: 'Movie',
-      type: 'ACTOR',
+      type: 1,
     };
 
     //Act
@@ -63,7 +63,7 @@ describe('CastMembersController Unit Tests', () => {
     const output: UpdateCastMemberOutput = {
       id,
       name: 'Movie',
-      type: 'ACTOR',
+      type: 1,
       created_at: new Date(),
     };
     const mockUpdateUseCase = {
@@ -73,7 +73,7 @@ describe('CastMembersController Unit Tests', () => {
     controller['updateUseCase'] = mockUpdateUseCase;
     const input: Omit<UpdateCastMemberInput, 'id'> = {
       name: 'Movie',
-      type: 'ACTOR',
+      type: 1,
     };
     const presenter = await controller.update(id, input);
     expect(mockUpdateUseCase.execute).toHaveBeenCalledWith({ id, ...input });
@@ -100,7 +100,7 @@ describe('CastMembersController Unit Tests', () => {
     const output: GetCastMemberOutput = {
       id,
       name: 'Movie',
-      type: 'DIRECTOR',
+      type: 2,
       created_at: new Date(),
     };
     const mockGetUseCase = {
@@ -120,7 +120,7 @@ describe('CastMembersController Unit Tests', () => {
         {
           id: '9366b7dc-2d71-4799-b91c-c64adb205104',
           name: 'Movie',
-          type: 'DIRECTOR',
+          type: 2,
           created_at: new Date(),
         },
       ],
@@ -139,7 +139,7 @@ describe('CastMembersController Unit Tests', () => {
       per_page: 2,
       sort: 'name',
       sort_dir: 'desc' as SortDirection,
-      filter: 'test',
+      filter: { name: 'test' },
     };
     const presenter = await controller.search(searchParams);
     expect(presenter).toBeInstanceOf(CastMemberCollectionPresenter);

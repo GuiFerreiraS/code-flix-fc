@@ -2,7 +2,7 @@ import request from 'supertest';
 import { instanceToPlain } from 'class-transformer';
 import { Genre, GenreId } from '../../src/core/genre/domain/genre.aggregate';
 import { IGenreRepository } from '../../src/core/genre/domain/genre.repository';
-import { startApp } from '../../src/nest-modules/shared-module/testing/helpers';
+import { startApp } from 'src/nest-modules/shared-modules/testing/helpers';
 import { UpdateGenreFixture } from '../../src/nest-modules/genres-module/testing/genre-fixture';
 import { GENRES_PROVIDERS } from '../../src/nest-modules/genres-module/genres.providers';
 import { GenresController } from '../../src/nest-modules/genres-module/genres.controller';

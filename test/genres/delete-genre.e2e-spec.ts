@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { IGenreRepository } from '../../src/core/genre/domain/genre.repository';
 import { Genre } from '../../src/core/genre/domain/genre.aggregate';
-import { startApp } from '../../src/nest-modules/shared-module/testing/helpers';
+import { startApp } from 'src/nest-modules/shared-modules/testing/helpers';
 import { GENRES_PROVIDERS } from '../../src/nest-modules/genres-module/genres.providers';
 import { ICategoryRepository } from '../../src/core/category/domain/category.repository';
 import { CATEGORY_PROVIDERS } from '../../src/nest-modules/categories-module/categories.providers';

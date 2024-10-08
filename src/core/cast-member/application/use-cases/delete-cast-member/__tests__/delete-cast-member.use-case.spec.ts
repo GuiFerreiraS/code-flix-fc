@@ -1,3 +1,4 @@
+import { CastMemberType } from '@core/cast-member/domain/cast-member-type.vo';
 import { NotFoundError } from '../../../../../shared/domain/errors/not-found.error';
 import { InvalidUuidError } from '../../../../../shared/domain/value-objects/uuid.vo';
 import {
@@ -29,7 +30,9 @@ describe('DeleteCastMemberUseCase Unit Tests', () => {
   });
 
   it('should delete a cast member', async () => {
-    const items = [new CastMember({ name: 'test 1', type: 1 })];
+    const items = [
+      new CastMember({ name: 'test 1', type: CastMemberType.createAnActor() }),
+    ];
     repository.items = items;
     await useCase.execute({
       id: items[0].cast_member_id.id,
