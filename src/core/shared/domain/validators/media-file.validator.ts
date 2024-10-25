@@ -59,8 +59,7 @@ export class InvalidMediaFileSizeError extends Error {
 export class InvalidMediaFileMimeTypeError extends Error {
   constructor(actual_mime_type: string, valid_mime_types: string[]) {
     super(
-      `Invalid media file mime type: ${actual_mime_type} not in 
-      ${valid_mime_types.join(', ')}`,
+      `Invalid media file mime type: ${actual_mime_type} not in ${valid_mime_types.join(', ')}`,
     );
   }
 }

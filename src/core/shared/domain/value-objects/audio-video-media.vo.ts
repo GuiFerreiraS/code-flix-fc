@@ -31,7 +31,7 @@ export abstract class AudioVideoMedia extends ValueObject {
     this.status = status;
   }
 
-  get url(): string {
+  get raw_url(): string {
     return `${this.raw_location}/${this.name}`;
   }
 
