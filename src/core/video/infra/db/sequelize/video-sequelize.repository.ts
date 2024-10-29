@@ -39,6 +39,7 @@ export class VideoSequelizeRepository implements IVideoRepository {
       include: this.relations_include,
       transaction: this.uow.getTransaction(),
     });
+    this.uow.addAggregateRoot(entity);
   }
 
   async bulkInsert(entities: Video[]): Promise<void> {
@@ -47,6 +48,7 @@ export class VideoSequelizeRepository implements IVideoRepository {
       include: this.relations_include,
       transaction: this.uow.getTransaction(),
     });
+    entities.forEach((e) => this.uow.addAggregateRoot(e));
   }
 
   async findById(id: VideoId): Promise<Video | null> {
@@ -193,8 +195,12 @@ export class VideoSequelizeRepository implements IVideoRepository {
         },
       ),
     ]);
+
+    this.uow.addAggregateRoot(entity);
   }
 
+  //TODO - implementar mudança de VideoID para o agregado video
+  //async delete(video: Video)
   async delete(id: VideoId): Promise<void> {
     const videoCategoryRelation =
       this.videoModel.associations.categories_id.target;
@@ -236,6 +242,8 @@ export class VideoSequelizeRepository implements IVideoRepository {
     if (affectedRows !== 1) {
       throw new NotFoundError(id.id, this.getEntity());
     }
+
+    //this.uow.addAggregateRoot(video);
   }
 
   private async _get(id: string): Promise<VideoModel | null> {
