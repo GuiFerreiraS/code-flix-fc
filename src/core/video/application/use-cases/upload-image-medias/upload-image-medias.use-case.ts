@@ -7,14 +7,14 @@ import { Banner } from '@core/video/domain/banner.vo';
 import { Thumbnail } from '@core/video/domain/thumbnail.vo';
 import { ThumbnailHalf } from '@core/video/domain/thumbnail-half.vo';
 import { EntityValidationError } from '@core/shared/domain/validators/validation.error';
+import { IUnitOfWork } from '@core/shared/domain/repository/unit-of-work.interface';
 import { IStorage } from '@core/shared/application/storage.interface';
-import { ApplicationService } from '@core/shared/application/application.service';
 
 export class UploadImageMediasUseCase
   implements IUseCase<UploadImageMediasInput, UploadImageMediasOutput>
 {
   constructor(
-    private appService: ApplicationService,
+    private uow: IUnitOfWork,
     private videoRepo: IVideoRepository,
     private storage: IStorage,
   ) {}
@@ -58,7 +58,7 @@ export class UploadImageMediasUseCase
       id: image.url,
     });
 
-    await this.appService.run(async () => {
+    await this.uow.do(async () => {
       await this.videoRepo.update(video);
     });
   }
