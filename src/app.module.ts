@@ -13,7 +13,7 @@ import { VideosModule } from './nest-modules/videos-module/videos.module';
     CategoriesModule,
     CastMembersModule,
     SharedModule,
-    VideosModule,
+    // VideosModule,
   ],
 })
 export class AppModule {}
