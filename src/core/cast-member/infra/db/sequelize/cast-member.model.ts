@@ -1,4 +1,4 @@
-import { CastMemberTypes } from '@core/cast-member/domain/cast-member-type.vo';
+import { CastMemberTypes } from '../../../domain/cast-member-type.vo';
 import {
   Column,
   DataType,

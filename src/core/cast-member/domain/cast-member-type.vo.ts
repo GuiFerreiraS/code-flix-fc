@@ -1,4 +1,4 @@
-import { Either } from '@core/shared/domain/either';
+import { Either } from '../../shared/domain/either';
 import { ValueObject } from '../../shared/domain/value-object';
 
 export enum CastMemberTypes {

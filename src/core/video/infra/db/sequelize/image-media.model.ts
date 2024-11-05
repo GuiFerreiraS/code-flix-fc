@@ -1,4 +1,4 @@
-import { Uuid } from '@core/shared/domain/value-objects/uuid.vo';
+import { Uuid } from '../../../../shared/domain/value-objects/uuid.vo';
 import {
   Column,
   DataType,
