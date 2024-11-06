@@ -20,7 +20,7 @@ GET http://localhost:3000/categories
 # Authorization: Bearer {{jwtToken}}
 
 ###
-GET http://localhost:3000/categories/c5944c8c-06cb-4ec0-a03e-b01e93bddbae
+GET http://localhost:3000/categories/{{categoryId}}
 
 
 ### 
