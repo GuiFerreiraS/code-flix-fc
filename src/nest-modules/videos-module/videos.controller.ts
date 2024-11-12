@@ -76,7 +76,7 @@ export class VideosController {
       video?: Express.Multer.File[];
     },
   ) {
-    const hasFiles = files ? Object.keys(files).length > 0 : false;
+    const hasFiles = files ? Object.keys(files).length : false;
     const hasData = Object.keys(updateVideoDto).length > 0;
 
     if (hasFiles && hasData) {
@@ -92,9 +92,12 @@ export class VideosController {
       });
       const input = new UpdateVideoInput({ id, ...data });
       await this.updateUseCase.execute(input);
+      const output = await this.getUseCase.execute({ id });
+      return VideosController.serialize(output);
     }
 
     const hasMoreThanOneFile = Object.keys(files).length > 1;
+
     if (hasMoreThanOneFile) {
       throw new BadRequestException('Only one file can be sent');
     }
