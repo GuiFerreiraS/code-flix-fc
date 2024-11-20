@@ -11,6 +11,7 @@ import { UseCaseModule } from './nest-modules/use-case-module/use-case.module';
 import { RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import { RabbitMQFakeConsumer } from './rabbitmq-fake.consumer';
 import { RabbitMQFakeController } from './rabbitmq-fake/rabbitmq-fake.controller';
+import { RabbitmqModule } from './nest-modules/rabbitmq-module/rabbitmq.module';
 
 @Module({
   imports: [
@@ -26,6 +27,10 @@ import { RabbitMQFakeController } from './rabbitmq-fake/rabbitmq-fake.controller
     RabbitMQModule.forRoot(RabbitMQModule, {
       uri: 'amqp://admin:admin@rabbitmq:5672',
     }),
+    // RabbitMQModule.forRoot(RabbitMQModule, {
+    //   uri: 'amqp://admin:admin@rabbitmq:5672',
+    // }),
+    RabbitmqModule.forRoot(),
   ],
   providers: [RabbitMQFakeConsumer],
   controllers: [RabbitMQFakeController],
