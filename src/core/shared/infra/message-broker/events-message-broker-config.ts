@@ -1,9 +1,9 @@
-import { VideoAudioMediaReplacedEvent } from '@core/video/domain/domain-events/video-audio-media-replaced.event';
+import { VideoAudioMediaUploadedIntegrationEvent } from '@core/video/domain/domain-events/video-audio-media-replaced.event';
 
 export const EVENTS_MESSAGE_BROKER_CONFIG = {
-  [VideoAudioMediaReplacedEvent.name]: {
+  [VideoAudioMediaUploadedIntegrationEvent.name]: {
     exchange: 'amq.direct',
-    routing_key: VideoAudioMediaReplacedEvent.name,
+    routing_key: VideoAudioMediaUploadedIntegrationEvent.name,
   },
   TestEvent: {
     exchange: 'test-exchange',
