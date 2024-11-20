@@ -25,6 +25,7 @@ export class RabbitmqConsumeErrorFilter implements ExceptionFilter {
       RabbitmqConsumeErrorFilter.NON_RETRIABLE_ERRORS.some(
         (error) => exception instanceof error,
       );
+
     if (hasRetriableError) {
       return new Nack(false);
     }
