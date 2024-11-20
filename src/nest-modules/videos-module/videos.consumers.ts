@@ -6,29 +6,30 @@ import { Injectable, UseFilters, ValidationPipe } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { RabbitmqConsumeErrorFilter } from '../rabbitmq-module/rabbitmq-consume-error/rabbitmq-consume-error.filter';
 
+@UseFilters(RabbitmqConsumeErrorFilter)
 @Injectable()
 export class VideosConsumers {
   constructor(private moduleRef: ModuleRef) {}
 
-  @UseFilters(new RabbitmqConsumeErrorFilter())
   @RabbitSubscribe({
-    exchange: 'amq.direct',
-    routingKey: 'video.convert',
+    exchange: 'direct.delayed',
+    routingKey: 'videos.convert',
     queue: 'micro-videos/admin',
     allowNonJsonMessages: true,
     queueOptions: {
       deadLetterExchange: 'dlx.exchange',
-      deadLetterRoutingKey: 'video.convert',
-      // messageTtl: 5000 - tempo de vida da mensagem na fila para ser republicada
+      deadLetterRoutingKey: 'videos.convert',
+      //messageTtl: 5000 - tempo de vida da mensagem na fila para ser republicada
     },
   })
   async onProcessVideo(msg: {
     video: {
-      resource_id: string;
+      resource_id: string; //video_id.field
       encoded_video_folder: string;
-      status: 'COMPLETE' | 'FAILED';
+      status: 'COMPLETED' | 'FAILED';
     };
   }) {
+    throw new FakeError();
     const resource_id = `${msg.video?.resource_id || ''}`;
     const [video_id, field] = resource_id.split('.');
     const input = new ProcessAudioVideoMediasInput({
@@ -48,5 +49,11 @@ export class VideosConsumers {
       ProcessAudioVideoMediasUseCase,
     );
     await useCase.execute(input);
+  }
+}
+
+class FakeError extends Error {
+  constructor() {
+    super('Fake error');
   }
 }
