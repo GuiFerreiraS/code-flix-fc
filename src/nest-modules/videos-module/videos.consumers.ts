@@ -7,6 +7,7 @@ export class VideosConsumers {
     exchange: 'amq.direct',
     routingKey: 'video.convert',
     queue: 'micro-videos/admin',
+    allowNonJsonMessages: true,
   })
   onProcessVideo(msg: {
     video: {
