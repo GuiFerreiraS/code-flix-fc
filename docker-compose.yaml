@@ -20,9 +20,11 @@ services:
       - seccomp:unconfined
 
   rabbitmq:
-    image: rabbitmq:3.8-management-alpine
+    build: ./.docker/rabbitmq
     ports:
       - 15672:15672
     environment:
       - RABBITMQ_DEFAULT_USER=admin
       - RABBITMQ_DEFAULT_PASS=admin
+    dns:
+      - 8.8.8.8
