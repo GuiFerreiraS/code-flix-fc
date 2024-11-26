@@ -135,7 +135,7 @@ GET http://localhost:3000/rabbitmq-fake
 
 ### Estou usando host.docker.internal, porque no momento o dev container com rest client está fazendo requisição de dentro do container, 
 ### então por localhost:8080 não funciona, mas se estiver usando o rest client fora do container, pode usar localhost:8080
-POST http://localhost:8080/realms/codeflix/protocol/openid-connect/token
+POST http://host.docker.internal:8080/realms/codeflix/protocol/openid-connect/token
 Content-Type: application/x-www-form-urlencoded
 
 username=admin@user.com
@@ -150,6 +150,7 @@ GET http://host.docker.internal:8080/realms/codeflix/.well-known/openid-configur
 GET http://host.docker.internal:8080/realms/codeflix/protocol/openid-connect/certs
 
 ###
+# @name auth
 POST http://localhost:3000/auth
 Content-Type: application/json
 
@@ -160,7 +161,7 @@ Content-Type: application/json
 
 ###
 
-@jwtToken = eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiYWRtaW4tY2F0YWxvZyJdfSwiaWF0IjoxNzAyNTU2NzU5LCJleHAiOjE3MDI2NDMxNTl9.VwEHk-2ZkgveV-Ghp_X3NiwEysda-pkWArYueaKqkB_SljIVjmP2jgVr28fdVyc0dTTYlkmUimKKFI2_ce3n2Xnb6AXVr2xcEibUbdgL71WYw27P8jZ-Y6V2cvIJnZqFeDD4rtzkrqXOqyzr5EImYURdDG3r7_R6BLpfyz4CGNIK9wYVfTXT85EzFl_noMdCGQxUZSojHKIWivxd9xWQGTckYOivJODM5xpDPUAuJm3r2bAcCfNA8JWDyZs3zZtDVgzMeLCFrq3VOOe6FnkuaDULj7_adO6EJ43lYHQxHXY2tcGO4_wxX0fJ9tuTtrYBpz2FCISN8tc5EaDNLIZnhg
+@jwtToken = eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiYWRtaW4tY2F0YWxvZyJdfSwiaWF0IjoxNzMyNTgwMTI0LCJleHAiOjE3MzI2NjY1MjR9.PZbrfggtguV9ovLDy2YtDC7Ye76jAS6ZPh--0JoS-wSUABtYlkMwdjFCToU5Hw04xKre1sHLNJ-A6uS_J_eA1dmICRxkZDqJxuFsxXYpO1hGHBNRyTrWdXvmWhLe4TJeoIouJYunYmQdY38X_m0EjAuDQGsc6KNsBpo3pUuvXxyZFl9PyxUiMuCh1w14XHaTlVvKbLepkwT6QK1Hy2t0L-_rVUwWZ2dQ51yoyWRHd84_fLtM97lydbmQlDtdfwTmGC7wYxH2ZirjEtqW_NLdukTcOIS0OQdLRnSbJTsRvshS7jIruIMiK3636Q7656sCIi4SAcjAO3PAl5gu86UtCg
 
 ###
 GET http://localhost:3000/auth
