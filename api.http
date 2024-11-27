@@ -4,7 +4,7 @@
 # @name createCategory
 POST http://localhost:3000/categories
 Content-Type: application/json
-# Authorization: Bearer {{jwtToken}}
+Authorization: Bearer {{jwtToken}}
 
 {
     "name": "Category 1",
@@ -17,7 +17,7 @@ Content-Type: application/json
 
 ###
 GET http://localhost:3000/categories
-# Authorization: Bearer {{jwtToken}}
+Authorization: Bearer {{jwtToken}}
 
 ###
 GET http://localhost:3000/categories/{{categoryId}}
@@ -161,7 +161,7 @@ Content-Type: application/json
 
 ###
 
-@jwtToken = eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiYWRtaW4tY2F0YWxvZyJdfSwiaWF0IjoxNzMyNTgwMTI0LCJleHAiOjE3MzI2NjY1MjR9.PZbrfggtguV9ovLDy2YtDC7Ye76jAS6ZPh--0JoS-wSUABtYlkMwdjFCToU5Hw04xKre1sHLNJ-A6uS_J_eA1dmICRxkZDqJxuFsxXYpO1hGHBNRyTrWdXvmWhLe4TJeoIouJYunYmQdY38X_m0EjAuDQGsc6KNsBpo3pUuvXxyZFl9PyxUiMuCh1w14XHaTlVvKbLepkwT6QK1Hy2t0L-_rVUwWZ2dQ51yoyWRHd84_fLtM97lydbmQlDtdfwTmGC7wYxH2ZirjEtqW_NLdukTcOIS0OQdLRnSbJTsRvshS7jIruIMiK3636Q7656sCIi4SAcjAO3PAl5gu86UtCg
+@jwtToken = eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiYWRtaW4tY2F0YWxvZyJdfSwiaWF0IjoxNzMyNjY2NDM0LCJleHAiOjE3MzI3NTI4MzR9.LzZ8y8Zm-srlrK72keBWFqNoaa3jkGxu-uwhQcWVxeOvpAzEaoTDRTxleaaHGxRuTZu5kUm_gBXDtL5cgBzNQu-s8DaOcVGWnWSqggHVYcQLUxK1Pi-P0eY9AXnRmdYAthfuWg-CZk01K-XqJIPw42nTKmzP6PSx67_dVI3u0TeSihSrgvU_ntv-4WG0fZTwZK4sIqiljIZRnUcXpNEg3Os-8ExDRqy_czx6f98RQViFWmfDaIoZ3JPo8GCHeqB3tBMb-5s_NnlvdkIw2wMbl6iSSRapaelDRB2lM1oBywMb0sIsluI1PtPKxEoMMUQUTatGj1EkS1OG3GFwkkIBEg
 
 ###
 GET http://localhost:3000/auth

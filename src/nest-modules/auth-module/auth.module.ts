@@ -1,10 +1,11 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { AuthGuard } from './auth.guard';
 import { ConfigService } from '@nestjs/config';
 
+@Global()
 @Module({
   imports: [
     // JwtModule.register({
@@ -15,7 +16,6 @@ import { ConfigService } from '@nestjs/config';
     JwtModule.registerAsync({
       useFactory: (configService: ConfigService) => {
         return {
-          //global: true,
           privateKey: configService.get('JWT_PRIVATE_KEY'),
           publicKey: configService.get('JWT_PUBLIC_KEY'),
           signOptions: {
@@ -24,7 +24,7 @@ import { ConfigService } from '@nestjs/config';
         };
       },
       inject: [ConfigService],
-      //global: true,
+      global: true,
     }),
   ],
   controllers: [AuthController],
