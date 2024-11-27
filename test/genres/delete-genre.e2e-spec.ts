@@ -16,7 +16,7 @@ describe('GenresController (e2e)', () => {
           id: '88ff2587-ce5a-4769-a8c6-1d63d29c5f7a',
           expected: {
             message:
-              'Genre Not Found using ID 88ff2587-ce5a-4769-a8c6-1d63d29c5f7a',
+              'Genre not found with id: 88ff2587-ce5a-4769-a8c6-1d63d29c5f7a',
             statusCode: 404,
             error: 'Not Found',
           },

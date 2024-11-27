@@ -13,9 +13,12 @@ import { ConfigService } from '@nestjs/config';
       useFactory: (configService: ConfigService) => {
         const credentials = configService.get('GOOGLE_CLOUD_CREDENTIALS');
         const bucket = configService.get('GOOGLE_CLOUD_STORAGE_BUCKET_NAME');
-        const app = initializeApp({
-          credential: admin.credential.cert(credentials),
-        });
+        const app =
+          admin.apps.length === 0
+            ? initializeApp({
+                credential: admin.credential.cert(credentials),
+              })
+            : admin.app();
         const storage = getStorage(app);
         return new GoogleCloudStorage(storage, bucket);
       },

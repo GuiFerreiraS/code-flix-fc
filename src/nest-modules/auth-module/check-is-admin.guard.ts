@@ -27,8 +27,6 @@ export class CheckIsAdminGuard implements CanActivate {
     const payload = request['user'] as PayloadUser;
     const roles = payload?.realm_access?.roles || [];
 
-    console.log(roles);
-
     if (roles.indexOf('admin-catalog') === -1) {
       throw new ForbiddenException();
     }

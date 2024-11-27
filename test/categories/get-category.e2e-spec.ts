@@ -12,6 +12,35 @@ import { Category } from '@core/category/domain/category.aggregate';
 describe('CategoriesController (e2e)', () => {
   const nestApp = startApp();
   describe('/categories/:id (GET)', () => {
+    describe('unauthenticated', () => {
+      const app = startApp();
+
+      test('should return 401 when not authenticated', async () => {
+        const categoryRepo = nestApp.app.get<ICategoryRepository>(
+          CategoryProviders.REPOSITORIES.CATEGORY_REPOSITORY.provide,
+        );
+        const category = Category.fake().aCategory().build();
+        await categoryRepo.insert(category);
+
+        return request(nestApp.app.getHttpServer())
+          .get(`/categories/${category.category_id.id}`)
+          .expect(401);
+      });
+
+      test('should return 403 when not authenticated as admin', async () => {
+        const categoryRepo = nestApp.app.get<ICategoryRepository>(
+          CategoryProviders.REPOSITORIES.CATEGORY_REPOSITORY.provide,
+        );
+        const category = Category.fake().aCategory().build();
+        await categoryRepo.insert(category);
+
+        return request(nestApp.app.getHttpServer())
+          .get(`/categories/${category.category_id.id}`)
+          .authenticate(app.app, false)
+          .expect(403);
+      });
+    });
+
     describe('should a response error when id is invalid or not found', () => {
       const arrange = [
         {
@@ -36,6 +65,7 @@ describe('CategoriesController (e2e)', () => {
       test.each(arrange)('when id is $id', async ({ id, expected }) => {
         return request(nestApp.app.getHttpServer())
           .get(`/categories/${id}`)
+          .authenticate(nestApp.app)
           .expect(expected.statusCode)
           .expect(expected);
       });
@@ -50,6 +80,7 @@ describe('CategoriesController (e2e)', () => {
 
       const res = await request(nestApp.app.getHttpServer())
         .get(`/categories/${category.category_id.id}`)
+        .authenticate(nestApp.app)
         .expect(200);
       const keyInResponse = GetCategoryFixture.keysInResponse;
       expect(Object.keys(res.body)).toStrictEqual(['data']);

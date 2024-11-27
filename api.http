@@ -21,6 +21,7 @@ Authorization: Bearer {{jwtToken}}
 
 ###
 GET http://localhost:3000/categories/{{categoryId}}
+Authorization: Bearer {{jwtToken}}
 
 
 ### 
