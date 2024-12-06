@@ -38,6 +38,9 @@ lerna-debug.log*
 
 .history/
 
+docker-compose.override.yaml
+.docker/filebeatdata
+
 # dotenv environment variable files
 .env
 .env.development.local
