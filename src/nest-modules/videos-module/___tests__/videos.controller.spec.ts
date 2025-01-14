@@ -60,9 +60,6 @@ describe('VideosController Unit Tests', () => {
     deleteUseCase = module.get<DeleteVideoUseCase>(DeleteVideoUseCase);
     getUseCase = module.get<GetVideoUseCase>(GetVideoUseCase);
     listUseCase = module.get<ListVideosUseCase>(ListVideosUseCase);
-    uploadAudioVideoMedia = module.get<UploadAudioVideoMediasUseCase>(
-      UploadAudioVideoMediasUseCase,
-    );
   });
 
   it('should create a video', async () => {
