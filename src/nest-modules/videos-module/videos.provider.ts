@@ -23,6 +23,8 @@ import { GetVideoUseCase } from '@core/video/application/use-cases/get-video/get
 import { ProcessAudioVideoMediasUseCase } from '@core/video/application/use-cases/process-audio-video-medias/process-audio-video-medias.use-case';
 import { PublishVideoMediaReplacedInQueueHandler } from '@core/video/application/handlers/publish-video-media-replaced-in-queue.handler';
 import { IMessageBroker } from '@core/shared/application/message-broker.interface';
+import { ListVideosUseCase } from '@core/video/application/use-cases/list-videos/list-videos.use-case';
+import { DeleteVideoUseCase } from '@core/video/application/use-cases/delete-video/delete-video.use-case';
 
 export const REPOSITORIES = {
   VIDEO_REPOSITORY: {
@@ -114,6 +116,28 @@ export const USE_CASES = {
       'IStorage',
     ],
   },
+  LIST_VIDEOS_USE_CASE: {
+    provide: ListVideosUseCase,
+    useFactory: (
+      videoRepo: IVideoRepository,
+      categoryRepo: ICategoryRepository,
+      genreRepo: IGenreRepository,
+      castMemberRepo: ICastMemberRepository,
+    ) => {
+      return new ListVideosUseCase(
+        videoRepo,
+        categoryRepo,
+        genreRepo,
+        castMemberRepo,
+      );
+    },
+    inject: [
+      REPOSITORIES.VIDEO_REPOSITORY.provide,
+      CATEGORY_PROVIDERS.REPOSITORIES.CATEGORY_REPOSITORY.provide,
+      GENRES_PROVIDERS.REPOSITORIES.GENRE_REPOSITORY.provide,
+      CAST_MEMBERS_PROVIDERS.REPOSITORIES.CAST_MEMBER_REPOSITORY.provide,
+    ],
+  },
   GET_VIDEO_USE_CASE: {
     provide: GetVideoUseCase,
     useFactory: (
@@ -135,6 +159,13 @@ export const USE_CASES = {
       GENRES_PROVIDERS.REPOSITORIES.GENRE_REPOSITORY.provide,
       CAST_MEMBERS_PROVIDERS.REPOSITORIES.CAST_MEMBER_REPOSITORY.provide,
     ],
+  },
+  DELETE_VIDEO_USE_CASE: {
+    provide: DeleteVideoUseCase,
+    useFactory: (videoRepo: IVideoRepository) => {
+      return new DeleteVideoUseCase(videoRepo);
+    },
+    inject: [REPOSITORIES.VIDEO_REPOSITORY.provide],
   },
   PROCESS_AUDIO_VIDEO_MEDIA_USE_CASE: {
     provide: ProcessAudioVideoMediasUseCase,

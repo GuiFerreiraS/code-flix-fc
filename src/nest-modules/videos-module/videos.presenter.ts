@@ -1,7 +1,5 @@
 import { Transform, Type } from 'class-transformer';
 
-import { ListGenresOutput } from '../../core/genre/application/use-cases/list-genres/list-genres.use-case';
-
 import { CollectionPresenter } from '../shared-modules/collection.presenter';
 import {
   VideoCastMemberOutput,
@@ -108,5 +106,15 @@ export class VideoPresenter {
       return new VideoCastMemberPresenter(item);
     });
     this.created_at = output.created_at;
+  }
+}
+
+export class VideoCollectionPresenter extends CollectionPresenter {
+  data: VideoPresenter[];
+
+  constructor(output: any) {
+    const { items, ...paginationProps } = output;
+    super(paginationProps);
+    this.data = items.map((item) => new VideoPresenter(item));
   }
 }
