@@ -12,4 +12,5 @@ async function bootstrap() {
 
   migrator(sequelize).runAsCLI();
 }
+
 bootstrap();
