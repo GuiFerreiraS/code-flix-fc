@@ -88,10 +88,20 @@ jobs:
           docker compose -f docker-compose.ci.yaml exec -u root -T app cp ./envs/.env.e2e.example ./envs/.env.e2e
 
       - name: run unit and integration tests
-        run: docker compose -f docker-compose.ci.yaml exec -T app npm run test
+        run: docker compose -f docker-compose.ci.yaml exec -T app npm run test:cov
 
       - name: run e2e tests
         run: docker compose -f docker-compose.ci.yaml exec -T app npm run test:e2e -- --runInBand --detectOpenHandles --forceExit
+
+      - name: Copy coverage reports from container
+        run: |
+          CONTAINER_ID=$(docker compose -f docker-compose.ci.yaml ps -q app)
+          docker cp $CONTAINER_ID:/home/node/app/coverage ./coverage
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: Bump version and push tag
         id: tagging
