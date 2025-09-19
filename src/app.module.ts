@@ -30,4 +30,5 @@ import { AuthModule } from './nest-modules/auth-module/auth.module';
   providers: [RabbitMQFakeConsumer],
   controllers: [RabbitMQFakeController],
 })
+
 export class AppModule {}
